@@ -28,6 +28,10 @@
         --input-bg: rgba(36, 36, 36, 0.8);
       }
 
+      * {
+        box-sizing: border-box;
+      }
+
       /* Reset and base styles */
       html,
       body {
@@ -494,6 +498,243 @@
           height: 1px;
         }
       }
+
+      /* Recommendation Engine Styles */
+      #recommendation-engine {
+        padding: 2rem;
+        background: var(--card-bg);
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      #recommendation-engine h2 {
+        font-family: "Roboto Condensed", sans-serif;
+        font-weight: 600;
+        color: var(--text-light);
+        font-size: clamp(1.4rem, 4vw, 1.8rem);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid rgba(229, 229, 229, 0.2);
+      }
+
+      .question-container {
+        text-align: center;
+        padding: 0.5rem;
+      }
+
+      #current-question {
+        font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+        margin-bottom: 1.5rem;
+        color: var(--primary);
+        font-weight: 600;
+        line-height: 1.4;
+      }
+
+      .options-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .option-btn {
+        padding: 0.8rem 1rem;
+        background: var(--input-bg);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        color: var(--text-light);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: clamp(0.9rem, 2vw, 1rem);
+        font-weight: 500;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        word-break: break-word;
+      }
+
+      .option-btn:hover {
+        background: rgba(229, 9, 20, 0.2);
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(229, 9, 20, 0.1);
+      }
+
+      .option-btn.selected {
+        background: rgba(229, 9, 20, 0.3);
+        border-color: var(--primary);
+        color: white;
+        font-weight: 600;
+      }
+
+      .navigation-buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+        margin-top: 1rem;
+      }
+
+      .nav-btn {
+        padding: 0.7rem 1.5rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: clamp(0.9rem, 2vw, 1rem);
+        transition: all 0.3s ease;
+        min-width: 120px;
+      }
+
+      .nav-btn:hover:not(:disabled) {
+        background: #f40612;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+      }
+
+      .nav-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: var(--input-bg);
+      }
+
+      #question-counter {
+        font-size: clamp(0.85rem, 2vw, 1rem);
+        color: var(--text-grey);
+        font-weight: 500;
+        min-width: 60px;
+        text-align: center;
+      }
+
+      .results-container {
+        text-align: center;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .results-container h3 {
+        font-size: clamp(1.2rem, 3vw, 1.6rem);
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+      }
+
+      .recommendation-results {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      .recommendation-card {
+        background: var(--input-bg);
+        padding: 1.2rem;
+        border-radius: 8px;
+        text-align: center;
+        transition: all 0.3s ease;
+        border-left: 3px solid var(--primary);
+      }
+
+      .recommendation-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .recommendation-card h4 {
+        font-size: clamp(1rem, 2.5vw, 1.2rem);
+        margin-bottom: 0.8rem;
+        color: var(--text-light);
+        font-weight: 600;
+        line-height: 1.4;
+      }
+
+      .recommendation-card p {
+        font-size: clamp(0.85rem, 2vw, 0.95rem);
+        color: var(--text-grey);
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+      }
+
+      .recommendation-card strong {
+        color: var(--text-light);
+        font-weight: 500;
+      }
+
+      .restart-btn {
+        padding: 0.8rem 2rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 1.5rem;
+        font-weight: 600;
+        font-size: clamp(0.95rem, 2vw, 1.1rem);
+        transition: all 0.3s ease;
+      }
+
+      .restart-btn:hover {
+        background: #f40612;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .options-container {
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          gap: 0.8rem;
+        }
+
+        .recommendation-results {
+          grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+          gap: 1rem;
+        }
+
+        .nav-btn {
+          min-width: 100px;
+          padding: 0.6rem 1.2rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .options-container {
+          grid-template-columns: 1fr;
+        }
+
+        .recommendation-results {
+          grid-template-columns: 1fr;
+        }
+
+        .navigation-buttons {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .nav-btn {
+          width: 100%;
+        }
+
+        #question-counter {
+          margin: 0.5rem 0;
+        }
+      }
     </style>
   </head>
   <body>
@@ -505,6 +746,38 @@
     </div>
 
     <div class="content-wrapper">
+      <!-- Add this section below your filters sections -->
+      <section id="recommendation-engine">
+        <h2>Personalized Recommendations</h2>
+        <div class="recommendation-flow">
+          <div id="question-container" class="question-container">
+            <h3 id="current-question">
+              What type of content are you looking for?
+            </h3>
+            <div id="options-container" class="options-container">
+              <!-- Options will be populated by JavaScript -->
+            </div>
+            <div class="navigation-buttons">
+              <button id="prev-btn" class="nav-btn" disabled>← Previous</button>
+              <span id="question-counter">1/5</span>
+              <button id="next-btn" class="nav-btn">Next →</button>
+            </div>
+          </div>
+          <div
+            id="results-container"
+            class="results-container"
+            style="display: none"
+          >
+            <h3>Recommended For You</h3>
+            <div
+              id="recommendation-results"
+              class="recommendation-results"
+            ></div>
+            <button id="restart-btn" class="restart-btn">Start Over</button>
+          </div>
+        </div>
+      </section>
+
       <section id="random-movies">
         <h2>Featured Movies</h2>
         <div id="random-list">Loading...</div>
@@ -772,6 +1045,11 @@
             tbody.innerHTML =
               '<tr><td colspan="6" class="no-results" style="color: #ff6b6b;">Error loading series results</td></tr>';
           });
+
+        document.getElementById("results").scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
       }
 
       // Initialize featured series
@@ -840,6 +1118,11 @@
             tbody.innerHTML =
               '<tr><td colspan="6" class="no-results" style="color: #ff6b6b;">Error loading results</td></tr>';
           });
+
+        document.getElementById("results").scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
       }
 
       // TMDB API integration
@@ -969,6 +1252,366 @@
         changeGenre();
         setInterval(changeGenre, 1000);
       }, 2000);
+    </script>
+    <script>
+      // Recommendation Engine Questions
+      const questions = [
+        {
+          question: "What type of content are you looking for?",
+          options: ["Movies", "TV Series"],
+          key: "contentType",
+        },
+        {
+          question: "What mood are you in?",
+          options: [
+            "Action-packed",
+            "Thought-provoking",
+            "Lighthearted",
+            "Romantic",
+            "Scary",
+          ],
+          key: "mood",
+          genreMap: {
+            "Action-packed": "Action,Adventure",
+            "Thought-provoking": "Drama,Biography",
+            Lighthearted: "Comedy,Family",
+            Romantic: "Romance",
+            Scary: "Horror,Thriller",
+          },
+        },
+        {
+          question: "How much time do you have?",
+          options: [
+            "Short (< 30 mins)",
+            "Medium (30-60 mins)",
+            "Long (1-2 hours)",
+            "Marathon (2+ hours)",
+          ],
+          key: "duration",
+          durationMap: {
+            Movies: {
+              "Short (< 30 mins)": [0, 30],
+              "Medium (30-60 mins)": [30, 60],
+              "Long (1-2 hours)": [60, 120],
+              "Marathon (2+ hours)": [120, 999],
+            },
+            "TV Series": {
+              "Short (< 30 mins)": [0, 30],
+              "Medium (30-60 mins)": [30, 60],
+              "Long (1-2 hours)": [60, 120],
+              "Marathon (2+ hours)": [120, 999],
+            },
+          },
+        },
+        {
+          question: "How popular should it be?",
+          options: [
+            "Hidden Gem (< 10k votes)",
+            "Popular (10k-100k votes)",
+            "Blockbuster (100k+ votes)",
+          ],
+          key: "popularity",
+          votesMap: {
+            "Hidden Gem (< 10k votes)": [0, 10000],
+            "Popular (10k-100k votes)": [10000, 100000],
+            "Blockbuster (100k+ votes)": [100000, 9999999],
+          },
+        },
+        {
+          question: "Minimum rating preference?",
+          options: ["7+ (Good)", "8+ (Great)", "9+ (Excellent)"],
+          key: "rating",
+        },
+      ];
+
+      // Recommendation Engine Logic
+      let currentQuestionIndex = 0;
+      let userAnswers = {};
+
+      // Initialize the recommendation engine
+      function initRecommendationEngine() {
+        showQuestion(currentQuestionIndex);
+
+        // Event listeners for navigation buttons
+        document.getElementById("prev-btn").addEventListener("click", () => {
+          if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            showQuestion(currentQuestionIndex);
+          }
+        });
+
+        document.getElementById("next-btn").addEventListener("click", () => {
+          const selectedOption = document.querySelector(".option-btn.selected");
+          if (!selectedOption && currentQuestionIndex > 0) {
+            alert("Please select an option");
+            return;
+          }
+
+          if (selectedOption) {
+            const currentQuestion = questions[currentQuestionIndex];
+            userAnswers[currentQuestion.key] = selectedOption.dataset.value;
+          }
+
+          if (currentQuestionIndex < questions.length - 1) {
+            currentQuestionIndex++;
+            showQuestion(currentQuestionIndex);
+          } else {
+            generateRecommendations();
+          }
+        });
+
+        document.getElementById("restart-btn").addEventListener("click", () => {
+          currentQuestionIndex = 0;
+          userAnswers = {};
+          document.getElementById("results-container").style.display = "none";
+          document.getElementById("question-container").style.display = "block";
+          showQuestion(currentQuestionIndex);
+        });
+      }
+
+      // Show the current question
+      function showQuestion(index) {
+        const question = questions[index];
+        const optionsContainer = document.getElementById("options-container");
+        const questionElement = document.getElementById("current-question");
+        const counterElement = document.getElementById("question-counter");
+
+        // Update question and counter
+        questionElement.textContent = question.question;
+        counterElement.textContent = `${index + 1}/${questions.length}`;
+
+        // Update previous button state
+        document.getElementById("prev-btn").disabled = index === 0;
+
+        // Update next button text
+        const nextBtn = document.getElementById("next-btn");
+        nextBtn.textContent =
+          index === questions.length - 1 ? "Get Recommendations →" : "Next →";
+
+        // Clear and populate options
+        optionsContainer.innerHTML = "";
+        question.options.forEach((option) => {
+          const optionBtn = document.createElement("button");
+          optionBtn.className = "option-btn";
+          optionBtn.textContent = option;
+          optionBtn.dataset.value = option;
+
+          // Check if this option was previously selected
+          if (userAnswers[question.key] === option) {
+            optionBtn.classList.add("selected");
+          }
+
+          optionBtn.addEventListener("click", () => {
+            // Remove selected class from all options
+            document.querySelectorAll(".option-btn").forEach((btn) => {
+              btn.classList.remove("selected");
+            });
+
+            // Add selected class to clicked option
+            optionBtn.classList.add("selected");
+          });
+
+          optionsContainer.appendChild(optionBtn);
+        });
+      }
+
+      // Helper function to parse movie runtime (e.g., "142 min" -> 142)
+      function parseRuntime(runtime) {
+        if (!runtime) return 0;
+        const match = runtime.match(/\d+/);
+        return match ? parseInt(match[0]) : 0;
+      }
+
+      // Helper function to parse votes (e.g., "1,000" -> 1000)
+      function parseVotes(votes) {
+        if (!votes) return 0;
+        return parseInt(votes.toString().replace(/,/g, "")) || 0;
+      }
+
+      // Generate recommendations based on user answers
+      function generateRecommendations() {
+        document.getElementById("question-container").style.display = "none";
+        document.getElementById("results-container").style.display = "block";
+
+        const resultsContainer = document.getElementById(
+          "recommendation-results"
+        );
+        resultsContainer.innerHTML =
+          '<div class="loading"><div class="spinner"></div></div>';
+
+        // Build query based on user answers
+        let queryParams = new URLSearchParams();
+        const minRating =
+          userAnswers.rating === "7+ (Good)"
+            ? 7
+            : userAnswers.rating === "8+ (Great)"
+            ? 8
+            : 9;
+
+        // Apply genre filter based on mood
+        let genreFilter = "";
+        if (userAnswers.mood && questions[1].genreMap[userAnswers.mood]) {
+          genreFilter = questions[1].genreMap[userAnswers.mood].toLowerCase();
+        }
+
+        // Get popularity range
+        let [minVotes, maxVotes] = [0, 9999999];
+        if (userAnswers.popularity) {
+          [minVotes, maxVotes] = questions[3].votesMap[userAnswers.popularity];
+        }
+
+        // Get duration range
+        let [minDuration, maxDuration] = [0, 999];
+        if (userAnswers.duration && userAnswers.contentType) {
+          [minDuration, maxDuration] =
+            questions[2].durationMap[userAnswers.contentType][
+              userAnswers.duration
+            ];
+        }
+
+        // Fetch data based on content type
+        const endpoint =
+          userAnswers.contentType === "Movies" ? "/search" : "/search_series";
+        fetch(endpoint)
+          .then((res) => res.json())
+          .then((data) => {
+            // Filter the data based on user preferences
+            const filteredData = data.filter((item) => {
+              // Rating filter
+              if (parseFloat(item.Rating) < minRating) return false;
+
+              // Genre filter
+              if (genreFilter) {
+                const itemGenres = (
+                  userAnswers.contentType === "Movies"
+                    ? item.Genre
+                    : item.Genres || ""
+                ).toLowerCase();
+                const requiredGenres = genreFilter.split(",");
+                if (
+                  !requiredGenres.some((genre) => itemGenres.includes(genre))
+                ) {
+                  return false;
+                }
+              }
+
+              // Votes filter
+              const votes = parseVotes(item.Votes);
+              if (votes < minVotes || votes > maxVotes) return false;
+
+              // Duration filter
+              if (userAnswers.contentType === "Movies") {
+                const runtime = parseRuntime(item.Runtime);
+                if (runtime < minDuration || runtime > maxDuration)
+                  return false;
+              } else {
+                const duration =
+                  parseFloat(item["EpisodeDuration(in Minutes)"]) || 0;
+                if (duration < minDuration || duration > maxDuration)
+                  return false;
+              }
+
+              return true;
+            });
+
+            // Sort by rating (highest first) and display
+            filteredData.sort(
+              (a, b) => parseFloat(b.Rating) - parseFloat(a.Rating)
+            );
+            displayRecommendations(
+              filteredData.slice(0, 6),
+              userAnswers.contentType === "Movies" ? "movie" : "series"
+            );
+          })
+          .catch((error) => {
+            console.error("Error fetching recommendations:", error);
+            resultsContainer.innerHTML =
+              '<p class="no-results">Error loading recommendations. Please try again.</p>';
+          });
+      }
+
+      // Display recommendations
+      function displayRecommendations(items, type) {
+        const resultsContainer = document.getElementById(
+          "recommendation-results"
+        );
+        resultsContainer.innerHTML = "";
+
+        if (items.length === 0) {
+          resultsContainer.innerHTML =
+            '<p class="no-results">No recommendations found matching your criteria</p>';
+          return;
+        }
+
+        items.forEach((item) => {
+          const card = document.createElement("div");
+          card.className = "recommendation-card";
+
+          const link = document.createElement("a");
+          link.href = `/${type}/${item.ID}`;
+
+          const title = document.createElement("h4");
+          title.textContent =
+            type === "movie" ? item["Movie Name"] : item["Title"];
+
+          const rating = document.createElement("p");
+          rating.innerHTML = `<strong>Rating:</strong> ${item.Rating}`;
+
+          const votes = document.createElement("p");
+          votes.innerHTML = `<strong>Votes:</strong> ${item.Votes || "N/A"}`;
+
+          const details = document.createElement("div");
+          details.className = "recommendation-details";
+
+          if (type === "movie") {
+            const runtime = document.createElement("p");
+            runtime.innerHTML = `<strong>Runtime:</strong> ${
+              item.Runtime || "N/A"
+            }`;
+
+            const genre = document.createElement("p");
+            genre.innerHTML = `<strong>Genre:</strong> ${item.Genre || "N/A"}`;
+
+            const director = document.createElement("p");
+            director.innerHTML = `<strong>Director:</strong> ${
+              item.Directors ? item.Directors.split(",")[0] : "N/A"
+            }`;
+
+            details.appendChild(runtime);
+            details.appendChild(genre);
+            details.appendChild(director);
+          } else {
+            const duration = document.createElement("p");
+            duration.innerHTML = `<strong>Episode Duration:</strong> ${
+              item["EpisodeDuration(in Minutes)"] || "N/A"
+            } min`;
+
+            const genres = document.createElement("p");
+            genres.innerHTML = `<strong>Genres:</strong> ${
+              item.Genres || "N/A"
+            }`;
+
+            const stars = document.createElement("p");
+            stars.innerHTML = `<strong>Stars:</strong> ${
+              item.Actors ? item.Actors.split(",")[0] : "N/A"
+            }`;
+
+            details.appendChild(duration);
+            details.appendChild(genres);
+            details.appendChild(stars);
+          }
+
+          link.appendChild(title);
+          link.appendChild(rating);
+          link.appendChild(votes);
+          link.appendChild(details);
+          card.appendChild(link);
+          resultsContainer.appendChild(card);
+        });
+      }
+
+      // Initialize the recommendation engine when DOM is loaded
+      document.addEventListener("DOMContentLoaded", initRecommendationEngine);
     </script>
   </body>
 </html>
