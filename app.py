@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request, jsonify, render_template
 import pandas as pd
 import os
@@ -27,13 +28,21 @@ def movie_detail(movie_id):
     movie = movie[0]
     genre = movie.get('Genre', '').lower()
 
-    # Get movies with same genre, exclude current movie
     same_genre_movies = df[df['Genre'].str.lower().str.contains(genre, na=False) & (df['ID'] != movie_id)]
     related_movies = same_genre_movies.sample(n=min(10, len(same_genre_movies))) \
                       .to_dict(orient='records')
+    
+    # Pass keys as separate variables
+    api_key_1 = "AIzaSyBdgQrCmB6XxxOXSN3Oyk8zmsRIxq9V_kg"
+    api_key_2 = "AIzaSyCW13LFIN7BBQWREenK5rcZ1XGQuX8ijKg"
 
-    return render_template("movie.html", movie=movie, related_movies=related_movies)
-
+    return render_template(
+        "movie.html", 
+        movie=movie, 
+        related_movies=related_movies,
+        api_key_1=api_key_1,
+        api_key_2=api_key_2
+    )
 
 @app.route("/search")
 def search():
@@ -76,4 +85,4 @@ def search():
     return jsonify(results.to_dict(orient="records"))
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=False)
+    app.run(debug=True)
