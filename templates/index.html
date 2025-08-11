@@ -602,16 +602,24 @@
               data.forEach((movie) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                  <td><a href="/movie/${movie.ID}">${movie["Movie Name"]}</a></td>
-                  <td><span style="color: var(--primary); font-weight: 600;">${movie["Rating"]}</span></td>
-                  <td>${movie["Genre"]}</td>
-                  <td>${movie["Directors"]}</td>
-                  <td>${movie["Stars"]}</td>
-                  <td><a href="${movie["Link"]}" target="_blank">View</a></td>
-                `;
+            <td><a href="/movie/${movie.ID}">${movie["Movie Name"]}</a></td>
+            <td><span style="color: var(--primary); font-weight: 600;">${movie["Rating"]}</span></td>
+            <td>${movie["Genre"]}</td>
+            <td>${movie["Directors"]}</td>
+            <td>${movie["Stars"]}</td>
+            <td><a href="${movie["Link"]}" target="_blank">View</a></td>
+          `;
                 tbody.appendChild(row);
               });
             }
+
+            // Reset inputs after search results are displayed
+            document.getElementById("query").value = "";
+            document.getElementById("genre").value = "";
+            document.getElementById("actor").value = "";
+            document.getElementById("director").value = "";
+            document.getElementById("min_rating").value = "";
+            document.getElementById("max_rating").value = "";
           })
           .catch((error) => {
             console.error("Search error:", error);
@@ -695,6 +703,57 @@
           searchMovies();
         });
       });
+
+      const genres = [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Biography",
+        "Comedy",
+        "Crime",
+        "Documentary",
+        "Drama",
+        "Family",
+        "Fantasy",
+        "History",
+        "Horror",
+        "Musical",
+        "Mystery",
+        "Romance",
+        "Sci-Fi",
+        "Sport",
+        "Thriller",
+        "War",
+        "Western",
+      ];
+
+      const subtitleEl = document.querySelector(".subtitle");
+      let index = 0;
+
+      function fadeOut(element, duration, callback) {
+        element.style.transition = `opacity ${duration}ms`;
+        element.style.opacity = 0;
+        setTimeout(callback, duration);
+      }
+
+      function fadeIn(element, duration) {
+        element.style.transition = `opacity ${duration}ms`;
+        element.style.opacity = 1;
+      }
+
+      function changeGenre() {
+        fadeOut(subtitleEl, 500, () => {
+          subtitleEl.textContent = genres[index];
+          fadeIn(subtitleEl, 500);
+          index = (index + 1) % genres.length;
+        });
+      }
+
+      // Start after 2 seconds, then every 1 second change with animation (fade out + fade in)
+      setTimeout(() => {
+        changeGenre();
+        setInterval(changeGenre, 1000);
+      }, 2000);
     </script>
   </body>
 </html>
