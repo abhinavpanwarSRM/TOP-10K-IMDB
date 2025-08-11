@@ -8,13 +8,17 @@
       rel="stylesheet"
     />
     <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=EB+Garamond:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <link
       rel="icon"
       href="{{ url_for('static', filename='favicon.png') }}"
       type="image/x-icon"
     />
     <style>
       :root {
-        --primary: #e50914; /* Netflix red */
+        --primary: #e50914;
         --secondary: #141414;
         --dark-bg: #181818;
         --text-light: #ffffff;
@@ -24,57 +28,138 @@
         --input-bg: rgba(36, 36, 36, 0.8);
       }
 
+      /* Reset and base styles */
+      html,
       body {
-        font-family: "Poppins", sans-serif;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
         margin: 0;
         padding: 0;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
         background-color: var(--secondary);
         color: var(--text-light);
         min-height: 100vh;
         cursor: default;
+        position: relative;
       }
 
-      .container {
-        max-width: 1200px;
+      /* Title section */
+      .title-container {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        padding: 0 20px;
+        box-sizing: border-box;
+      }
+
+      .title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(2.5rem, 8vw, 5.5rem);
+        color: white;
+        position: relative;
+        margin: 0;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        animation-delay: 0.3s;
+        letter-spacing: 1px;
+        font-weight: 600;
+        text-align: center;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+
+      .subtitle {
+        font-family: "EB Garamond", serif;
+        color: var(--text-grey);
+        font-size: clamp(0.9rem, 3vw, 1.3rem);
+        letter-spacing: 4px;
+        margin-top: 1.5rem;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeUp 1s ease-out forwards;
+        animation-delay: 0.8s;
+        text-transform: uppercase;
+        font-weight: 500;
+        text-align: center;
+      }
+
+      @keyframes fadeUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .title::after {
+        content: "";
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 2px;
+        background: var(--primary);
+        animation: expandLine 1.5s ease-out forwards;
+        animation-delay: 0.5s;
+      }
+
+      @keyframes expandLine {
+        to {
+          width: min(200px, 80%);
+        }
+      }
+
+      /* Content sections */
+      .content-wrapper {
+        max-width: 1400px;
         margin: 0 auto;
         padding: 2rem;
+        box-sizing: border-box;
+        width: 100%;
       }
 
-      h1 {
-        font-family: "Roboto Condensed", sans-serif;
-        text-align: center;
-        margin: 2rem 0 3rem;
-        font-weight: 700;
-        color: white;
-        font-size: 2.8rem;
-        letter-spacing: 0.5px;
+      section {
+        margin-bottom: 2.5rem;
+        width: 100%;
       }
 
       h2 {
         font-family: "Roboto Condensed", sans-serif;
         font-weight: 600;
         color: var(--text-light);
-        font-size: 1.8rem;
+        font-size: clamp(1.4rem, 4vw, 1.8rem);
         margin-bottom: 1.5rem;
         padding-bottom: 0.5rem;
         border-bottom: 1px solid rgba(229, 229, 229, 0.2);
       }
 
+      /* Random movies section */
       #random-movies,
+      #tmdb-suggestions,
       #filters {
         background: var(--card-bg);
         padding: 2rem;
         border-radius: 8px;
-        margin-bottom: 2.5rem;
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
         border: 1px solid rgba(255, 255, 255, 0.05);
+        width: 100%;
+        box-sizing: border-box;
       }
 
       #random-list {
         display: flex;
         flex-wrap: wrap;
         gap: 1rem;
-        justify-content: flex-start;
+        justify-content: center;
       }
 
       #random-list a {
@@ -84,10 +169,13 @@
         border-radius: 4px;
         text-decoration: none;
         font-weight: 500;
-        font-size: 0.95rem;
-        flex: 1 0 18%;
+        font-size: clamp(0.85rem, 2vw, 0.95rem);
+        flex: 1 0 auto;
+        min-width: 150px;
+        max-width: 100%;
         transition: all 0.3s ease;
         border-left: 3px solid var(--primary);
+        text-align: center;
       }
 
       #random-list a:hover {
@@ -95,6 +183,7 @@
         transform: translateY(-2px);
       }
 
+      /* Filters section */
       #filters {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -151,6 +240,13 @@
         transform: translateY(-2px);
       }
 
+      /* Results table */
+      .table-container {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
       table {
         width: 100%;
         border-collapse: separate;
@@ -159,7 +255,7 @@
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-        margin-bottom: 3rem;
+        min-width: 600px;
       }
 
       th {
@@ -174,7 +270,7 @@
       }
 
       td {
-        padding: 1.2rem 1.5rem;
+        padding: 1rem 1.5rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         font-size: 0.95rem;
         color: var(--text-light);
@@ -200,6 +296,7 @@
         text-decoration: underline;
       }
 
+      /* Loading states */
       .loading {
         display: flex;
         justify-content: center;
@@ -229,15 +326,7 @@
         font-style: italic;
       }
 
-      #tmdb-suggestions {
-        background: var(--card-bg);
-        padding: 2rem;
-        border-radius: 8px;
-        margin-bottom: 2.5rem;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-      }
-
+      /* TMDB suggestions */
       #tmdb-movie-display {
         min-height: 120px;
         display: flex;
@@ -270,7 +359,7 @@
 
       #tmdb-movie-display strong {
         display: block;
-        font-size: 1.3rem;
+        font-size: clamp(1rem, 3vw, 1.3rem);
         font-weight: 600;
         margin-bottom: 0.5rem;
         color: var(--primary);
@@ -278,263 +367,83 @@
         letter-spacing: 0.5px;
       }
 
-      #tmdb-movie-display .movie-info {
-        font-size: 0.95rem;
-        line-height: 1.6;
-        color: var(--text-grey);
+      /* Background image */
+      .bg-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        z-index: -1;
       }
 
-      #tmdb-movie-display .rating {
-        color: var(--primary);
-        font-weight: 600;
-        display: inline-block;
-        margin-left: 0.3rem;
-      }
-
-      #tmdb-movie-display .tmdb-logo {
+      .bg-overlay::after {
+        content: "";
         position: absolute;
-        bottom: 10px;
-        right: 10px;
-        width: 60px;
-        opacity: 0.7;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
       }
 
-      /* Animation for movie transition */
-      @keyframes fadeSlideIn {
-        0% {
-          opacity: 0;
-          transform: translateY(15px);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .tmdb-movie-enter {
-        animation: fadeSlideIn 0.7s ease-out forwards;
-      }
-
-      @media (max-width: 479px) {
-        .container {
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .content-wrapper {
           padding: 1rem;
         }
 
-        h1 {
-          font-size: 1.8rem;
-          margin: 1rem 0;
+        #random-movies,
+        #tmdb-suggestions,
+        #filters {
+          padding: 1.5rem;
         }
 
-        h2 {
-          font-size: 1.4rem;
+        #filters {
+          grid-template-columns: 1fr;
         }
 
+        #random-list a {
+          min-width: 120px;
+          padding: 0.8rem;
+        }
+
+        td,
+        th {
+          padding: 0.8rem 1rem;
+        }
+      }
+
+      @media (max-width: 480px) {
         #random-list {
           flex-direction: column;
         }
 
         #random-list a {
-          padding: 0.8rem;
-          font-size: 1rem;
+          width: 100%;
+          max-width: 100%;
         }
 
-        #filters {
-          grid-template-columns: 1fr;
-          padding: 1rem;
-        }
-
-        #filters input,
-        #filters button {
-          padding: 0.8rem;
-          font-size: 1rem;
-        }
-
-        table {
-          display: block;
-          overflow-x: auto;
-          white-space: nowrap;
-        }
-
-        #tmdb-movie-display {
-          padding: 1rem;
-          font-size: 0.9rem;
-        }
-      }
-
-      /* Medium devices and up (≥ 600px) */
-      @media (min-width: 600px) {
-        .container {
-          padding: 2rem 3rem;
-        }
-
-        h1 {
-          font-size: 2.8rem;
-          margin: 2rem 0 3rem;
-        }
-
-        #random-list a {
-          flex: 1 0 30%;
-          font-size: 1.05rem;
-          padding: 1rem 1.5rem;
-        }
-
-        #filters {
-          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-          gap: 1.5rem;
-        }
-
-        #filters input {
-          font-size: 1rem;
-          padding: 0.9rem 1.2rem;
-        }
-
-        #filters button {
-          font-size: 1.1rem;
-          padding: 1rem 1.3rem;
-        }
-
-        table th,
-        table td {
-          padding: 1.2rem 1.5rem;
-          font-size: 1rem;
-        }
-
-        /* Movie detail / related movies enhancements */
-        .overlay {
-          padding: 2rem;
-        }
-
-        .movie-detail {
-          padding: 2rem;
-        }
-
-        .movie-info p {
-          flex-direction: row;
-        }
-
-        .back-link {
-          width: auto;
-        }
-
-        .related-movies-list li {
-          flex: 0 0 auto;
-          max-width: none;
-        }
-
-        .related-movies-list a {
-          white-space: normal;
-        }
-      }
-
-      /* Tablets and up (≥ 768px) */
-      @media (min-width: 768px) {
-        #random-list a {
-          flex: 1 0 22%;
-          padding: 0.9rem 1.4rem;
-        }
-
-        #filters {
-          gap: 1.8rem;
-        }
-
-        #filters button {
-          padding: 1.1rem 1.4rem;
-        }
-
-        .related-movies-list {
-          gap: 1rem;
-        }
-
-        .related-movies-list a {
-          padding: 0.8rem 1rem;
-        }
-
-        #tmdb-movie-display {
-          padding: 1.2rem 1.5rem;
-        }
-
-        #tmdb-movie-display strong {
-          font-size: 1.1rem;
-        }
-
-        #tmdb-movie-display .movie-info {
-          font-size: 0.95rem;
-        }
-      }
-
-      /* Small desktops and up (≥ 992px) */
-      @media (min-width: 992px) {
-        .movie-info p strong {
-          min-width: 120px;
-        }
-
-        #random-list a {
-          flex: 1 0 18%;
-        }
-
-        #filters {
-          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-          gap: 2rem;
-        }
-
-        #filters input {
-          padding: 1rem 1.5rem;
-        }
-
-        #filters button {
-          padding: 1.2rem 1.5rem;
-          font-size: 1.15rem;
-        }
-
-        table th,
-        table td {
-          padding: 1.3rem 1.8rem;
-          font-size: 1.05rem;
-        }
-      }
-
-      /* Large desktops and up (≥ 1200px) */
-      @media (min-width: 1200px) {
-        .container {
-          max-width: 1300px;
-        }
-
-        h1 {
-          font-size: 3rem;
-        }
-
-        #random-list a {
-          padding: 1.1rem 1.6rem;
-        }
-
-        #filters {
-          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        }
-
-        #filters input,
-        #filters button {
-          font-size: 1.2rem;
-        }
-
-        table th,
-        table td {
-          font-size: 1.1rem;
-        }
-
-        #tmdb-movie-display strong {
-          font-size: 1.4rem;
-        }
-
-        #tmdb-movie-display .movie-info {
-          font-size: 1.1rem;
+        .title::after {
+          bottom: -10px;
+          height: 1px;
         }
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>TOP 10K IMDB</h1>
+    <div class="bg-overlay"></div>
 
+    <div class="title-container">
+      <h1 class="title">TOP 10K IMDB</h1>
+      <div class="subtitle">YOUR PERSONALIZED MOVIE GUIDE</div>
+    </div>
+
+    <div class="content-wrapper">
       <section id="random-movies">
         <h2>Featured Movies</h2>
         <div id="random-list">Loading...</div>
@@ -590,23 +499,25 @@
         <button onclick="searchMovies()">Search Movies</button>
       </section>
 
-      <table id="results">
-        <thead>
-          <tr>
-            <th>Movie Title</th>
-            <th>Rating</th>
-            <th>Genre</th>
-            <th>Director</th>
-            <th>Stars</th>
-            <th>IMDb</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-container">
+        <table id="results">
+          <thead>
+            <tr>
+              <th>Movie Title</th>
+              <th>Rating</th>
+              <th>Genre</th>
+              <th>Director</th>
+              <th>Stars</th>
+              <th>IMDb</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
 
     <script>
-      // List all your poster images here
+      // Background image setup
       const posters = [
         "{{ url_for('static', filename='poster/poster1.jpg') }}",
         "{{ url_for('static', filename='poster/poster2.jpg') }}",
@@ -618,19 +529,14 @@
         "{{ url_for('static', filename='poster/poster8.jpg') }}",
         "{{ url_for('static', filename='poster/poster9.jpg') }}",
         "{{ url_for('static', filename='poster/poster10.jpg') }}",
-        // Add more images as needed
       ];
 
-      // Pick random image
-      const randomPoster = posters[Math.floor(Math.random() * posters.length)];
+      const bgOverlay = document.querySelector(".bg-overlay");
+      bgOverlay.style.backgroundImage = `url('${
+        posters[Math.floor(Math.random() * posters.length)]
+      }')`;
 
-      // Set as background of body or any container
-      document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('${randomPoster}')`;
-      document.body.style.backgroundSize = "cover";
-      document.body.style.backgroundPosition = "center";
-      document.body.style.backgroundRepeat = "no-repeat";
-      document.body.style.backgroundAttachment = "fixed";
-
+      // Random movies loader
       async function loadRandomMovies() {
         const container = document.getElementById("random-list");
         container.innerHTML =
@@ -663,20 +569,14 @@
         }
       }
 
+      // Search function
       function searchMovies() {
-        const queryInput = document.getElementById("query");
-        const genreInput = document.getElementById("genre");
-        const actorInput = document.getElementById("actor");
-        const directorInput = document.getElementById("director");
-        const minRatingInput = document.getElementById("min_rating");
-        const maxRatingInput = document.getElementById("max_rating");
-
-        const query = queryInput.value;
-        const genre = genreInput.value;
-        const actor = actorInput.value;
-        const director = directorInput.value;
-        const minRating = minRatingInput.value;
-        const maxRating = maxRatingInput.value;
+        const query = document.getElementById("query").value;
+        const genre = document.getElementById("genre").value;
+        const actor = document.getElementById("actor").value;
+        const director = document.getElementById("director").value;
+        const minRating = document.getElementById("min_rating").value;
+        const maxRating = document.getElementById("max_rating").value;
 
         let params = new URLSearchParams();
         if (query) params.append("query", query);
@@ -702,24 +602,16 @@
               data.forEach((movie) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-            <td><a href="/movie/${movie.ID}">${movie["Movie Name"]}</a></td>
-            <td><span style="color: var(--primary); font-weight: 600;">${movie["Rating"]}</span></td>
-            <td>${movie["Genre"]}</td>
-            <td>${movie["Directors"]}</td>
-            <td>${movie["Stars"]}</td>
-            <td><a href="${movie["Link"]}" target="_blank">View</a></td>
-          `;
+                  <td><a href="/movie/${movie.ID}">${movie["Movie Name"]}</a></td>
+                  <td><span style="color: var(--primary); font-weight: 600;">${movie["Rating"]}</span></td>
+                  <td>${movie["Genre"]}</td>
+                  <td>${movie["Directors"]}</td>
+                  <td>${movie["Stars"]}</td>
+                  <td><a href="${movie["Link"]}" target="_blank">View</a></td>
+                `;
                 tbody.appendChild(row);
               });
             }
-
-            // Reset filters after search completes:
-            queryInput.value = "";
-            genreInput.value = "";
-            actorInput.value = "";
-            directorInput.value = "";
-            minRatingInput.value = "0";
-            maxRatingInput.value = "10";
           })
           .catch((error) => {
             console.error("Search error:", error);
@@ -728,18 +620,8 @@
           });
       }
 
-      document.addEventListener("DOMContentLoaded", () => {
-        loadRandomMovies();
-
-        // Add submit handler for form
-        document.querySelector("#filters").addEventListener("submit", (e) => {
-          e.preventDefault();
-          searchMovies();
-        });
-      });
-
-      const apiReadToken =
-        "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhOTc0Yjg0YTBlNGM0ZWNmNzg2N2M5MTE2NjliNGM5YSIsInN1YiI6IjY1Yjk0NjI0OTBmY2EzMDBjOTA1Nzc3MSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.tXlwbp1kJvAeplLvj2P_RdO1FJ1jfTQBSVSiUunoOGg";
+      // TMDB API integration
+      const apiReadToken = "YOUR_TMDB_API_TOKEN";
       const apiUrl = "https://api.themoviedb.org/3/movie/popular";
       const tmdbDisplay = document.getElementById("tmdb-movie-display");
       let tmdbMovies = [];
@@ -756,14 +638,14 @@
         setTimeout(() => {
           const movie = tmdbMovies[index];
           tmdbDisplay.innerHTML = `
-      <a href="https://www.themoviedb.org/movie/${
-        movie.id
-      }" target="_blank" style="color: var(--text-light); text-decoration:none;">
-        <strong>${movie.title.toUpperCase()}</strong><br/>
-        Release Date: ${movie.release_date}<br/>
-        Rating: ${movie.vote_average}
-      </a>
-    `;
+            <a href="https://www.themoviedb.org/movie/${
+              movie.id
+            }" target="_blank">
+              <strong>${movie.title.toUpperCase()}</strong><br/>
+              Release Date: ${movie.release_date}<br/>
+              Rating: ${movie.vote_average}
+            </a>
+          `;
           tmdbDisplay.style.opacity = 1;
         }, 500);
       }
@@ -790,12 +672,12 @@
           })
           .then((data) => {
             tmdbMovies = data.results || [];
-            if (tmdbMovies.length === 0) {
+            if (tmdbMovies.length > 0) {
+              cycleTmdbMovies();
+              setInterval(cycleTmdbMovies, 5000);
+            } else {
               tmdbDisplay.textContent = "No TMDb suggestions found.";
-              return;
             }
-            cycleTmdbMovies();
-            setInterval(cycleTmdbMovies, 5000);
           })
           .catch((err) => {
             console.error("TMDb fetch error:", err);
@@ -803,8 +685,15 @@
           });
       }
 
+      // Initialize everything
       document.addEventListener("DOMContentLoaded", () => {
+        loadRandomMovies();
         fetchTmdbMovies();
+
+        document.querySelector("#filters").addEventListener("submit", (e) => {
+          e.preventDefault();
+          searchMovies();
+        });
       });
     </script>
   </body>
