@@ -144,8 +144,10 @@
 
       /* Random movies section */
       #random-movies,
+      #random-series,
       #tmdb-suggestions,
-      #filters {
+      #filters,
+      #filters2 {
         background: var(--card-bg);
         padding: 2rem;
         border-radius: 8px;
@@ -155,14 +157,16 @@
         box-sizing: border-box;
       }
 
-      #random-list {
+      #random-list,
+      #random-list2 {
         display: flex;
         flex-wrap: wrap;
         gap: 1rem;
         justify-content: center;
       }
 
-      #random-list a {
+      #random-list a,
+      #random-list2 a {
         background: rgba(36, 36, 36, 0.8);
         color: var(--text-light);
         padding: 0.8rem 1.2rem;
@@ -178,13 +182,15 @@
         text-align: center;
       }
 
-      #random-list a:hover {
+      #random-list a:hover,
+      #random-list2 a:hover {
         background: rgba(229, 9, 20, 0.2);
         transform: translateY(-2px);
       }
 
       /* Filters section */
-      #filters {
+      #filters,
+      #filters2 {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 1.5rem;
@@ -194,7 +200,8 @@
         margin-bottom: 0;
       }
 
-      #filters label {
+      #filters label,
+      #filters2 label {
         display: block;
         margin-bottom: 0.5rem;
         color: var(--text-grey);
@@ -202,7 +209,8 @@
         font-weight: 500;
       }
 
-      #filters input {
+      #filters input,
+      #filters2 input {
         width: 100%;
         padding: 0.8rem 1rem;
         background: var(--input-bg);
@@ -214,13 +222,15 @@
         box-sizing: border-box;
       }
 
-      #filters input:focus {
+      #filters input:focus,
+      #filters2 input:focus {
         outline: none;
         border-color: var(--primary);
         box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.3);
       }
 
-      #filters button {
+      #filters button,
+      #filters2 button {
         width: 100%;
         padding: 0.9rem 1rem;
         background: var(--primary);
@@ -235,7 +245,8 @@
         margin-top: 0.5rem;
       }
 
-      #filters button:hover {
+      #filters button:hover,
+      #filters2 button:hover {
         background: #f40612;
         transform: translateY(-2px);
       }
@@ -398,16 +409,20 @@
         }
 
         #random-movies,
+        #random-series,
         #tmdb-suggestions,
-        #filters {
+        #filters,
+        #filters2 {
           padding: 1.5rem;
         }
 
-        #filters {
+        #filters,
+        #filters2 {
           grid-template-columns: 1fr;
         }
 
-        #random-list a {
+        #random-list a,
+        #random-list2 a {
           min-width: 120px;
           padding: 0.8rem;
         }
@@ -419,13 +434,15 @@
       }
 
       @media (max-width: 480px) {
-        #random-list {
+        #random-list,
+        #random-list2 {
           flex-direction: column;
           align-items: center;
           justify-content: center;
         }
 
-        #random-list a {
+        #random-list a,
+        #random-list2 a {
           width: 90%;
           max-width: 90%;
         }
@@ -449,6 +466,11 @@
       <section id="random-movies">
         <h2>Featured Movies</h2>
         <div id="random-list">Loading...</div>
+      </section>
+
+      <section id="random-series">
+        <h2>Featured Series</h2>
+        <div id="random-list2">Loading...</div>
       </section>
 
       <section id="tmdb-suggestions">
@@ -501,11 +523,56 @@
         <button onclick="searchMovies()">Search Movies</button>
       </section>
 
+      <section id="filters2">
+        <h2>Search Filters</h2>
+        <div class="filter-group2">
+          <label for="query2">Series Title</label>
+          <input type="text" id="query2" placeholder="Breaking Bad" />
+        </div>
+        <div class="filter-group2">
+          <label for="genre2">Genre</label>
+          <input type="text" id="genre2" placeholder="Crime, Drama, Thriller" />
+        </div>
+        <div class="filter-group2">
+          <label for="actor2">Actor</label>
+          <input type="text" id="actor2" placeholder="Bryan Cranston" />
+        </div>
+        <div class="filter-group2">
+          <label for="director2">Director</label>
+          <input type="text" id="director2" placeholder="Vince Gilligan" />
+        </div>
+        <div class="filter-group2">
+          <label for="min_rating2">Min Rating</label>
+          <input
+            type="number"
+            id="min_rating2"
+            step="0.5"
+            min="0"
+            max="10"
+            placeholder="7.5"
+            value="0"
+          />
+        </div>
+        <div class="filter-group2">
+          <label for="max_rating2">Max Rating</label>
+          <input
+            type="number"
+            id="max_rating2"
+            min="0"
+            max="10"
+            placeholder="10"
+            value="10"
+            readonly
+          />
+        </div>
+        <button onclick="searchSeries()">Search Series</button>
+      </section>
+
       <div class="table-container">
         <table id="results">
           <thead>
             <tr>
-              <th>Movie Title</th>
+              <th>Title</th>
               <th>Rating</th>
               <th>Genre</th>
               <th>Director</th>
@@ -571,6 +638,108 @@
         }
       }
 
+      // Featured series loader
+      async function loadRandomSeries() {
+        const container = document.getElementById("random-list2");
+        container.innerHTML =
+          '<div class="loading"><div class="spinner"></div></div>';
+
+        try {
+          const res = await fetch("/search_series?min_rating=7&limit=100"); // series search route
+          const data = await res.json();
+
+          if (!data || data.length === 0) {
+            container.innerHTML =
+              '<div class="no-results">No featured series found</div>';
+            return;
+          }
+
+          const shuffled = [...data].sort(() => 0.5 - Math.random());
+          const randomSeries = shuffled.slice(0, 10);
+
+          container.innerHTML = "";
+          randomSeries.forEach((series) => {
+            const a = document.createElement("a");
+            a.href = `/series/${series.ID}`;
+            a.textContent = series["Title"];
+            container.appendChild(a);
+          });
+        } catch (error) {
+          console.error("Error loading random series:", error);
+          container.innerHTML =
+            '<div class="no-results" style="color: #ff6b6b;">Error loading featured series</div>';
+        }
+      }
+
+      // Series search (shared results table)
+      function searchSeries() {
+        const query = document.getElementById("query2").value;
+        const genre = document.getElementById("genre2").value;
+        const actor = document.getElementById("actor2").value;
+        const minRating = document.getElementById("min_rating2").value;
+        const maxRating = document.getElementById("max_rating2").value;
+
+        let params = new URLSearchParams();
+        if (query) params.append("query", query);
+        if (genre) params.append("genre", genre);
+        if (actor) params.append("actor", actor);
+        params.append("min_rating", minRating);
+        params.append("max_rating", maxRating);
+
+        const tbody = document.querySelector("#results tbody");
+        tbody.innerHTML =
+          '<tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr>';
+
+        fetch("/search_series?" + params.toString())
+          .then((res) => res.json())
+          .then((data) => {
+            tbody.innerHTML = "";
+
+            if (data.length === 0) {
+              tbody.innerHTML =
+                '<tr><td colspan="6" class="no-results">No series found matching your criteria</td></tr>';
+            } else {
+              data.forEach((series) => {
+                const row = document.createElement("tr");
+                const imdbSearchUrl =
+                  "https://www.imdb.com/find/?q=" +
+                  encodeURIComponent(series["Title"]);
+                row.innerHTML = `
+            <td><a href="/series/${series.ID}">${series["Title"]}</a></td>
+            <td><span style="color: var(--primary); font-weight: 600;">${series["Rating"]}</span></td>
+            <td>${series["Genres"]}</td>
+            <td>${series["Actors"]}</td>
+            <td>${series["Years"]}</td>
+            <td><a href="${imdbSearchUrl}" target="_blank">View</a></td>
+          `;
+                tbody.appendChild(row);
+              });
+            }
+
+            // Reset inputs after search results are displayed
+            document.getElementById("query2").value = "";
+            document.getElementById("genre2").value = "";
+            document.getElementById("actor2").value = "";
+            document.getElementById("director2").value = "";
+            document.getElementById("min_rating2").value = "";
+            document.getElementById("max_rating2").value = "";
+          })
+          .catch((error) => {
+            console.error("Series search error:", error);
+            tbody.innerHTML =
+              '<tr><td colspan="6" class="no-results" style="color: #ff6b6b;">Error loading series results</td></tr>';
+          });
+      }
+
+      // Initialize featured series
+      document.addEventListener("DOMContentLoaded", () => {
+        loadRandomSeries();
+
+        document.querySelector("#filters2").addEventListener("submit", (e) => {
+          e.preventDefault();
+          searchSeries();
+        });
+      });
       // Search function
       function searchMovies() {
         const query = document.getElementById("query").value;
@@ -631,7 +800,8 @@
       }
 
       // TMDB API integration
-      const apiReadToken = "a974b84a0e4c4ecf7867c911669b4c9a";
+      const apiReadToken =
+        "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhOTc0Yjg0YTBlNGM0ZWNmNzg2N2M5MTE2NjliNGM5YSIsInN1YiI6IjY1Yjk0NjI0OTBmY2EzMDBjOTA1Nzc3MSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.tXlwbp1kJvAeplLvj2P_RdO1FJ1jfTQBSVSiUunoOGg";
       const apiUrl = "https://api.themoviedb.org/3/movie/popular";
       const tmdbDisplay = document.getElementById("tmdb-movie-display");
       let tmdbMovies = [];
