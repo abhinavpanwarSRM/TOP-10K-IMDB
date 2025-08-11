@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>{{ movie["Movie Name"] }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="icon"
       href="{{ url_for('static', filename='favicon.png') }}"
@@ -257,24 +257,24 @@
         .overlay {
           padding: 2rem;
         }
-        
+
         .movie-detail {
           padding: 2rem;
         }
-        
+
         .movie-info p {
           flex-direction: row;
         }
-        
+
         .back-link {
           width: auto;
         }
-        
+
         .related-movies-list li {
           flex: 0 0 auto;
           max-width: none;
         }
-        
+
         .related-movies-list a {
           white-space: normal;
         }
@@ -284,7 +284,7 @@
         .related-movies-list {
           gap: 1rem;
         }
-        
+
         .related-movies-list a {
           padding: 0.8rem 1rem;
         }
@@ -349,67 +349,61 @@
     <script>
       const movieName =
         "{{ movie['Movie Name'] }} {{ movie['Genre'] }} trailer";
-
-      const API_KEYS = [
-        "AIzaSyBdgQrCmB6XxxOXSN3Oyk8zmsRIxq9V_kg", // primary key
-        "AIzaSyCW13LFIN7BBQWREenK5rcZ1XGQuX8ijKg", // fallback key
-      ];
-
+      const API_KEYS = ["{{ api_key_1 }}", "{{ api_key_2 }}"];
       let currentKeyIndex = 0;
 
       function fetchTrailerWithKey() {
-        const key = API_KEYS[currentKeyIndex];
+        if (currentKeyIndex >= API_KEYS.length) {
+          document.getElementById("trailer-container").innerHTML =
+            "<p style='text-align:center; color:var(--primary);'>Trailer could not be loaded.</p>";
+          return;
+        }
+
+        const currentKey = API_KEYS[currentKeyIndex];
+
         fetch(
           `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
             movieName
-          )}&key=${key}&maxResults=1&type=video`
+          )}&key=${currentKey}&maxResults=1&type=video`
         )
           .then((res) => {
             if (!res.ok) {
-              if (currentKeyIndex < API_KEYS.length - 1) {
-                currentKeyIndex++;
-                return fetchTrailerWithKey();
-              } else {
-                throw new Error(
-                  `Failed to fetch with all API keys, status: ${res.status}`
-                );
-              }
+              throw new Error(`HTTP error! status: ${res.status}`);
             }
             return res.json();
           })
           .then((data) => {
-            if (data && data.items && data.items.length > 0) {
+            if (data?.items?.length > 0) {
               const videoId = data.items[0].id.videoId;
               const thumbnail = data.items[0].snippet.thumbnails.high.url;
 
               document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${thumbnail}')`;
 
               document.getElementById("trailer-container").innerHTML = `
-                <div class="trailer-thumbnail" 
-                     style="background-image:url('${thumbnail}')" 
-                     onclick="playTrailer('${videoId}')">
-                </div>
-              `;
+            <div class="trailer-thumbnail"
+                 style="background-image:url('${thumbnail}')"
+                 onclick="playTrailer('${videoId}')">
+            </div>
+          `;
             } else {
-              document.getElementById("trailer-container").innerHTML =
-                "<p style='text-align:center; color:var(--text-grey);'>No trailer found.</p>";
+              throw new Error("No items found in response");
             }
           })
           .catch((err) => {
-            console.error(err);
-            document.getElementById("trailer-container").innerHTML =
-              "<p style='text-align:center; color:var(--primary);'>Trailer could not be loaded.</p>";
+            console.error("Error with key:", currentKey, err);
+            currentKeyIndex++;
+            fetchTrailerWithKey();
           });
       }
 
       function playTrailer(videoId) {
         document.getElementById("trailer-container").innerHTML = `
-          <iframe width="560" height="315" 
-              src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1" 
-              frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen>
-          </iframe>
-        `;
+      <iframe width="560" height="315"
+          src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1"
+          frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+      </iframe>
+    `;
       }
 
       // Start fetching trailer with first API key
