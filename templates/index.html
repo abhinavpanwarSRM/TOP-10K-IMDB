@@ -567,15 +567,13 @@
       }
 
       .option-btn:hover {
-        background: rgba(229, 9, 20, 0.2);
-        border-color: var(--primary);
+        border-color: white;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(229, 9, 20, 0.1);
       }
 
       .option-btn.selected {
-        background: rgba(229, 9, 20, 0.3);
-        border-color: var(--primary);
+        border-color: white;
         color: white;
         font-weight: 600;
       }
@@ -1557,6 +1555,7 @@
           card.className = "recommendation-card";
 
           const link = document.createElement("a");
+          link.style.textDecoration = "none";
           link.href = `/${type}/${item.ID}`;
 
           const title = document.createElement("h4");
@@ -1590,6 +1589,7 @@
             details.appendChild(genre);
             details.appendChild(director);
           } else {
+            card.style.borderLeft = "3px solid rgba(0, 168, 225, 0.3)";
             const duration = document.createElement("p");
             duration.innerHTML = `<strong>Episode Duration:</strong> ${
               item["EpisodeDuration(in Minutes)"] || "N/A"
