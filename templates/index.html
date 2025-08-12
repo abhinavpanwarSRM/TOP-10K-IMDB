@@ -735,9 +735,275 @@
           margin: 0.5rem 0;
         }
       }
+
+      /* Navbar Container - Clean and Professional */
+      .navbar-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: #141414;
+        z-index: 1000;
+        padding: 0.6rem 0;
+        overflow: hidden;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      /* Filter Tags - Simple Scrolling */
+      .filter-tags {
+        display: flex;
+        gap: 0.8rem;
+        padding: 0 1.2rem;
+        width: max-content;
+        animation: scrollTags 40s linear infinite;
+      }
+
+      @keyframes scrollTags {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* Clean Tag Design */
+      .filter-tag {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        color: white;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        background: rgba(36, 36, 36, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      /* Movie Tags */
+      .filter-tag {
+        border-left: 3px solid #e50914;
+      }
+
+      /* Series Tags */
+      .filter-tag.series {
+        border-left: 3px solid #00a8e1;
+      }
+
+      /* Subtle Hover Effect */
+      .filter-tag:hover {
+        background: rgba(50, 50, 50, 0.9);
+        transform: translateY(-1px);
+      }
+
+      /* Loading State - Minimal */
+      .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+      }
+
+      .spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid rgba(229, 9, 20, 0.2);
+        border-top-color: #e50914;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* No Results - Clean */
+      .no-results {
+        text-align: center;
+        padding: 2rem;
+        color: #999;
+        font-style: italic;
+      }
+
+      /* Responsive Adjustments */
+      @media (max-width: 768px) {
+        .filter-tags {
+          gap: 0.6rem;
+          padding: 0 1rem;
+        }
+
+        .filter-tag {
+          padding: 0.4rem 0.8rem;
+          font-size: 0.8rem;
+        }
+      }
+
+      /* Medium devices (tablets, 768px and down) */
+      @media (max-width: 768px) {
+        .navbar-container {
+          padding: 0.5rem 0;
+          border-bottom-width: 1px;
+        }
+
+        .filter-tags {
+          gap: 0.7rem;
+          padding: 0 1rem;
+          animation-duration: 35s; /* Slightly slower on tablets */
+        }
+
+        .filter-tag {
+          padding: 0.45rem 0.9rem;
+          font-size: 0.82rem;
+          border-radius: 3px;
+          border-left-width: 2px;
+        }
+      }
+
+      /* Small devices (phones, 480px and down) */
+      @media (max-width: 480px) {
+        .navbar-container {
+          padding: 0.4rem 0;
+        }
+
+        .filter-tags {
+          gap: 0.5rem;
+          padding: 0 0.8rem;
+          animation-duration: 30s; /* Slowest on phones */
+        }
+
+        .filter-tag {
+          padding: 0.4rem 0.8rem;
+          font-size: 0.78rem;
+          border-left-width: 2px;
+        }
+
+        .loading {
+          padding: 1.5rem;
+        }
+
+        .spinner {
+          width: 20px;
+          height: 20px;
+          border-width: 2px;
+        }
+      }
+
+      /* Very small devices (phones, 360px and down) */
+      @media (max-width: 360px) {
+        .filter-tags {
+          gap: 0.4rem;
+          padding: 0 0.6rem;
+        }
+
+        .filter-tag {
+          padding: 0.35rem 0.7rem;
+          font-size: 0.75rem;
+        }
+      }
+
+      /* Large devices (monitors, 1200px and up) */
+      @media (min-width: 1200px) {
+        .navbar-container {
+          padding: 0.7rem 0;
+        }
+
+        .filter-tags {
+          gap: 1rem;
+          padding: 0 1.5rem;
+        }
+
+        .filter-tag {
+          padding: 0.6rem 1.1rem;
+          font-size: 0.88rem;
+        }
+      }
     </style>
   </head>
   <body>
+    <div class="navbar-container">
+      <div class="filter-tags">
+        <!-- Movie filters -->
+        <div
+          class="filter-tag"
+          data-filter='{"endpoint":"search","min_rating":8.5,"limit":100,"sort":"-rating"}'
+        >
+          Top 100 IMDb Movies
+        </div>
+        <div
+          class="filter-tag"
+          data-filter='{"endpoint":"search","genre":"Action","min_rating":8,"limit":10,"sort":"-rating"}'
+        >
+          Top 10 Action Movies
+        </div>
+        <div
+          class="filter-tag"
+          data-filter='{"endpoint":"search","genre":"Drama","min_rating":8,"limit":10,"sort":"-rating"}'
+        >
+          Top 10 Drama Movies
+        </div>
+        <div
+          class="filter-tag"
+          data-filter='{"endpoint":"search","genre":"Sci-Fi","min_rating":8,"limit":10,"sort":"-rating"}'
+        >
+          Top 10 Sci-Fi Movies
+        </div>
+        <div
+          class="filter-tag"
+          data-filter='{"endpoint":"search","genre":"Comedy","min_rating":7.5,"limit":10,"sort":"-rating"}'
+        >
+          Top 10 Comedy Movies
+        </div>
+        <div
+          class="filter-tag"
+          data-filter='{"endpoint":"search","min_rating":8,"min_votes":100000,"limit":10,"sort":"-rating"}'
+        >
+          Popular Blockbusters
+        </div>
+        <div
+          class="filter-tag"
+          data-filter='{"endpoint":"search","min_rating":8,"min_votes":10000,"max_votes":50000,"limit":10,"sort":"-rating"}'
+        >
+          Hidden Gems
+        </div>
+
+        <!-- Series filters -->
+        <div
+          class="filter-tag series"
+          data-filter='{"endpoint":"search_series","min_rating":8.5,"limit":100,"sort":"-rating"}'
+        >
+          Top 100 IMDb Series
+        </div>
+        <div
+          class="filter-tag series"
+          data-filter='{"endpoint":"search_series","genre":"Action","min_rating":8,"limit":10,"sort":"-rating"}'
+        >
+          Top 10 Action Series
+        </div>
+        <div
+          class="filter-tag series"
+          data-filter='{"endpoint":"search_series","genre":"Drama","min_rating":8,"limit":10,"sort":"-rating"}'
+        >
+          Top 10 Drama Series
+        </div>
+        <div
+          class="filter-tag series"
+          data-filter='{"endpoint":"search_series","genre":"Sci-Fi","min_rating":8,"limit":10,"sort":"-rating"}'
+        >
+          Top 10 Sci-Fi Series
+        </div>
+        <div
+          class="filter-tag series"
+          data-filter='{"endpoint":"search_series","genre":"Comedy","min_rating":7.5,"limit":10,"sort":"-rating"}'
+        >
+          Top 10 Comedy Series
+        </div>
+      </div>
+    </div>
+
     <div class="bg-overlay"></div>
 
     <div class="title-container">
@@ -899,7 +1165,105 @@
         </table>
       </div>
     </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Duplicate the tags for seamless looping
+        const filterTags = document.querySelector(".filter-tags");
+        const tags = filterTags.innerHTML;
+        filterTags.innerHTML = tags + tags;
 
+        // Add click handlers to all tags
+        document.querySelectorAll(".filter-tag").forEach((tag) => {
+          tag.addEventListener("click", function () {
+            const filterData = JSON.parse(this.getAttribute("data-filter"));
+            applyFilter(filterData);
+
+            // Scroll to results table
+            document.querySelector(".table-container").scrollIntoView({
+              behavior: "smooth",
+            });
+          });
+        });
+
+        // Pause animation on hover
+        const filterTagsContainer = document.querySelector(".filter-tags");
+        filterTagsContainer.addEventListener("mouseenter", () => {
+          filterTagsContainer.style.animationPlayState = "paused";
+        });
+
+        filterTagsContainer.addEventListener("mouseleave", () => {
+          filterTagsContainer.style.animationPlayState = "running";
+        });
+      });
+
+      function applyFilter(filter) {
+        const tbody = document.querySelector("#results tbody");
+        tbody.innerHTML =
+          '<tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr>';
+
+        // Build query params
+        let params = new URLSearchParams();
+        if (filter.min_rating) params.append("min_rating", filter.min_rating);
+        if (filter.max_rating)
+          params.append("max_rating", filter.max_rating || 10);
+        if (filter.genre) params.append("genre", filter.genre);
+        if (filter.min_votes) params.append("min_votes", filter.min_votes);
+        if (filter.max_votes) params.append("max_votes", filter.max_votes);
+        if (filter.limit) params.append("limit", filter.limit);
+        if (filter.sort) params.append("sort", filter.sort);
+
+        fetch(`${filter.endpoint}?${params.toString()}`)
+          .then((res) => {
+            if (!res.ok) throw new Error("Network response was not ok");
+            return res.json();
+          })
+          .then((data) => {
+            tbody.innerHTML = "";
+
+            if (!data || data.length === 0) {
+              tbody.innerHTML =
+                '<tr><td colspan="6" class="no-results">No results found</td></tr>';
+              return;
+            }
+
+            // Ensure we only show the exact number promised (for "Top 10" etc)
+            const results = filter.limit ? data.slice(0, filter.limit) : data;
+
+            results.forEach((item) => {
+              const row = document.createElement("tr");
+              if (filter.endpoint === "search") {
+                row.innerHTML = `
+            <td><a href="/movie/${item.ID}">${item["Movie Name"]}</a></td>
+            <td><span style="color: #e50914; font-weight: 600;">${item["Rating"]}</span></td>
+            <td>${item["Genre"]}</td>
+            <td>${item["Directors"]}</td>
+            <td>${item["Stars"]}</td>
+            <td><a href="${item["Link"]}" target="_blank">View</a></td>
+          `;
+              } else {
+                row.innerHTML = `
+            <td><a href="/series/${item.ID}">${item["Title"]}</a></td>
+            <td><span style="color: #e50914; font-weight: 600;">${
+              item["Rating"]
+            }</span></td>
+            <td>${item["Genres"]}</td>
+            <td>${item["Actors"]?.split(",")[0] || "N/A"}</td>
+            <td>${item["Years"]}</td>
+            <td><a href="https://www.imdb.com/find/?q=${encodeURIComponent(
+              item["Title"]
+            )}" target="_blank">View</a></td>
+          `;
+              }
+              tbody.appendChild(row);
+            });
+          })
+          .catch((error) => {
+            console.error("Error applying filter:", error);
+            tbody.innerHTML =
+              '<tr><td colspan="6" class="no-results" style="color: #ff6b6b;">Error loading results</td></tr>';
+          });
+      }
+    </script>
     <script>
       // Background image setup
       const posters = [
