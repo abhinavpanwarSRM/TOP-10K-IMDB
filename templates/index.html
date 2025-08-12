@@ -361,15 +361,6 @@
         padding: 2rem;
       }
 
-      .loading2 {
-        position: absolute;
-        display: flex;
-        width: 100%;
-        height: 0px;
-        align-items: center;
-        justify-content: center;
-      }
-
       .spinner {
         width: 40px;
         height: 40px;
@@ -1446,7 +1437,7 @@
           "recommendation-results"
         );
         resultsContainer.innerHTML =
-          '<div class="loading2"><div class="spinner"></div></div>';
+          '<div class="loading"><div class="spinner"></div></div>';
 
         // Build query based on user answers
         let queryParams = new URLSearchParams();
