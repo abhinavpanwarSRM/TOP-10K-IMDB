@@ -369,17 +369,18 @@
     <script>
       const artistName = "{{ artist['artist_name'] }}";
       const API_KEYS = ["{{ api_key_1 }}", "{{ api_key_2 }}"];
-      let currentKeyIndex = 0;
 
-      // Function to fetch artist video
+      let artistKeyIndex = 0;
+      let playlistKeyIndex = 0;
+
       function fetchArtistVideo() {
-        if (currentKeyIndex >= API_KEYS.length) {
+        if (artistKeyIndex >= API_KEYS.length) {
           document.getElementById("video-container").innerHTML =
             "<p style='text-align:center; color:var(--primary);'>Artist video could not be loaded.</p>";
           return;
         }
 
-        const currentKey = API_KEYS[currentKeyIndex];
+        const currentKey = API_KEYS[artistKeyIndex];
         const searchQuery = `most viewed song by ${artistName} on youtube`;
 
         fetch(
@@ -388,9 +389,7 @@
           )}&key=${currentKey}&maxResults=1&type=video`
         )
           .then((res) => {
-            if (!res.ok) {
-              throw new Error(`HTTP error! status: ${res.status}`);
-            }
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             return res.json();
           })
           .then((data) => {
@@ -401,31 +400,30 @@
               document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${thumbnail}')`;
 
               document.getElementById("video-container").innerHTML = `
-                <div class="video-thumbnail"
-                     style="background-image:url('${thumbnail}')"
-                     onclick="playVideo('${videoId}', 'video-container')">
-                </div>
-              `;
+            <div class="video-thumbnail"
+                 style="background-image:url('${thumbnail}')"
+                 onclick="playVideo('${videoId}', 'video-container')">
+            </div>
+          `;
             } else {
               throw new Error("No items found in response");
             }
           })
           .catch((err) => {
             console.error("Error with key:", currentKey, err);
-            currentKeyIndex++;
+            artistKeyIndex++;
             fetchArtistVideo();
           });
       }
 
-      // Function to fetch best songs playlist
       function fetchBestSongsPlaylist() {
-        if (currentKeyIndex >= API_KEYS.length) {
+        if (playlistKeyIndex >= API_KEYS.length) {
           document.getElementById("playlist-container").innerHTML =
             "<p style='text-align:center; color:var(--primary);'>Playlist could not be loaded.</p>";
           return;
         }
 
-        const currentKey = API_KEYS[currentKeyIndex];
+        const currentKey = API_KEYS[playlistKeyIndex];
         const searchQuery = `${artistName} greatest hits playlist`;
 
         fetch(
@@ -434,9 +432,7 @@
           )}&key=${currentKey}&maxResults=1&type=video`
         )
           .then((res) => {
-            if (!res.ok) {
-              throw new Error(`HTTP error! status: ${res.status}`);
-            }
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             return res.json();
           })
           .then((data) => {
@@ -445,33 +441,32 @@
               const thumbnail = data.items[0].snippet.thumbnails.high.url;
 
               document.getElementById("playlist-container").innerHTML = `
-                <div class="video-thumbnail"
-                     style="background-image:url('${thumbnail}')"
-                     onclick="playVideo('${videoId}', 'playlist-container')">
-                </div>
-              `;
+            <div class="video-thumbnail"
+                 style="background-image:url('${thumbnail}')"
+                 onclick="playVideo('${videoId}', 'playlist-container')">
+            </div>
+          `;
             } else {
               throw new Error("No items found in response");
             }
           })
           .catch((err) => {
             console.error("Error with key:", currentKey, err);
-            currentKeyIndex++;
+            playlistKeyIndex++;
             fetchBestSongsPlaylist();
           });
       }
 
       function playVideo(videoId, containerId) {
         document.getElementById(containerId).innerHTML = `
-          <iframe width="560" height="315"
-              src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1"
-              frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen>
-          </iframe>
-        `;
+      <iframe width="560" height="315"
+          src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1"
+          frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+      </iframe>
+    `;
       }
 
-      // Start fetching content
       fetchArtistVideo();
       fetchBestSongsPlaylist();
     </script>
