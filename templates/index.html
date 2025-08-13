@@ -792,6 +792,11 @@
         border-left: 3px solid #00a8e1;
       }
 
+      /* Artist Tags */
+      .filter-tag.artist {
+        border-left: 3px solid #1db954; /* Spotify green */
+      }
+
       /* Subtle Hover Effect */
       .filter-tag:hover {
         background: rgba(50, 50, 50, 0.9);
@@ -1000,6 +1005,55 @@
           data-filter='{"endpoint":"search_series","genre":"Comedy","min_rating":7.5,"limit":10,"sort":"-rating"}'
         >
           Top 10 Comedy Series
+        </div>
+        <!-- Artist filters -->
+        <div
+          class="filter-tag artist"
+          data-filter='{"endpoint":"search_artist","genre":"Pop","limit":10,"sort":"-popularity"}'
+        >
+          Top 10 Pop Artists
+        </div>
+        <div
+          class="filter-tag artist"
+          data-filter='{"endpoint":"search_artist","genre":"Rock","limit":10,"sort":"-popularity"}'
+        >
+          Top 10 Rock Artists
+        </div>
+        <div
+          class="filter-tag artist"
+          data-filter='{"endpoint":"search_artist","genre":"Hip-Hop","limit":10,"sort":"-popularity"}'
+        >
+          Top 10 Hip-Hop Artists
+        </div>
+        <div
+          class="filter-tag artist"
+          data-filter='{"endpoint":"search_artist","country":"India","limit":10,"sort":"-popularity"}'
+        >
+          Top 10 Indian Artists
+        </div>
+        <div
+          class="filter-tag artist"
+          data-filter='{"endpoint":"search_artist","country":"United States","limit":10,"sort":"-popularity"}'
+        >
+          Top 10 US Artists
+        </div>
+        <div
+          class="filter-tag artist"
+          data-filter='{"endpoint":"search_artist","country":"United Kingdom","limit":10,"sort":"-popularity"}'
+        >
+          Top 10 UK Artists
+        </div>
+        <div
+          class="filter-tag artist"
+          data-filter='{"endpoint":"search_artist","genre":"Electronic","limit":10,"sort":"-popularity"}'
+        >
+          Top 10 Electronic Artists
+        </div>
+        <div
+          class="filter-tag artist"
+          data-filter='{"endpoint":"search_artist","genre":"R&B","limit":10,"sort":"-popularity"}'
+        >
+          Top 10 R&B Artists
         </div>
       </div>
     </div>
@@ -1255,10 +1309,11 @@
           /* Grid Layout */
           .artist-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 20px;
             margin-top: 30px;
             padding: 0 10px;
+            justify-content: center;
           }
 
           /* Artist Card */
@@ -1404,30 +1459,41 @@
           }
 
           // Search form submit handler
+          // Search form submit handler
           document
             .getElementById("artistSearchForm")
             .addEventListener("submit", function (e) {
               e.preventDefault();
               const params = new URLSearchParams(new FormData(this));
+
+              // Show loading state
+              const artistResults = document.getElementById("artist-results");
+              artistResults.innerHTML =
+                '<div class="loading"><div class="spinner"></div></div>';
+
               fetch(`/search_artist?${params.toString()}`)
                 .then((res) => res.json())
                 .then((data) => {
-                  const container = document.getElementById("artist-results");
-                  container.innerHTML = "";
+                  artistResults.innerHTML = "";
                   if (data.length === 0) {
-                    container.innerHTML =
-                      "<p style='grid-column:1/-1; text-align:center;'>No results found.</p>";
+                    artistResults.innerHTML =
+                      '<p style="grid-column:1/-1; text-align:center;">No results found.</p>';
                   } else {
-                    data.forEach((a) => {
-                      container.innerHTML += `
-                <div class="artist-card">
-                  <a href="${a.DetailLink}">${a.artist_name}</a>
-                  <p>${a.artist_genre}</p>
-                  <p>${a.country}</p>
-                </div>
-              `;
+                    data.forEach((artist) => {
+                      artistResults.innerHTML += `
+                        <div class="artist-card">
+                            <a href="/artist/${artist.ID}">${artist.artist_name}</a>
+                            <p>${artist.artist_genre}</p>
+                            <p>${artist.country}</p>
+                        </div>
+                    `;
                     });
                   }
+                })
+                .catch((error) => {
+                  console.error("Error searching artists:", error);
+                  artistResults.innerHTML =
+                    '<p style="grid-column:1/-1; text-align:center; color:#ff6b6b;">Error loading results</p>';
                 });
             });
 
@@ -1485,9 +1551,16 @@
       });
 
       function applyFilter(filter) {
-        const tbody = document.querySelector("#results tbody");
-        tbody.innerHTML =
-          '<tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr>';
+        // Show loading state in the appropriate container
+        if (filter.endpoint === "search_artist") {
+          const artistResults = document.getElementById("artist-results");
+          artistResults.innerHTML =
+            '<div class="loading"><div class="spinner"></div></div>';
+        } else {
+          const tbody = document.querySelector("#results tbody");
+          tbody.innerHTML =
+            '<tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr>';
+        }
 
         // Build query params
         let params = new URLSearchParams();
@@ -1495,6 +1568,7 @@
         if (filter.max_rating)
           params.append("max_rating", filter.max_rating || 10);
         if (filter.genre) params.append("genre", filter.genre);
+        if (filter.country) params.append("country", filter.country);
         if (filter.min_votes) params.append("min_votes", filter.min_votes);
         if (filter.max_votes) params.append("max_votes", filter.max_votes);
         if (filter.limit) params.append("limit", filter.limit);
@@ -1502,53 +1576,99 @@
 
         fetch(`${filter.endpoint}?${params.toString()}`)
           .then((res) => {
-            if (!res.ok) throw new Error("Network response was not ok");
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             return res.json();
           })
           .then((data) => {
-            tbody.innerHTML = "";
+            if (filter.endpoint === "search_artist") {
+              // Handle artist results
+              const artistResults = document.getElementById("artist-results");
+              artistResults.innerHTML = "";
 
-            if (!data || data.length === 0) {
-              tbody.innerHTML =
-                '<tr><td colspan="6" class="no-results">No results found</td></tr>';
-              return;
-            }
-
-            // Ensure we only show the exact number promised (for "Top 10" etc)
-            const results = filter.limit ? data.slice(0, filter.limit) : data;
-
-            results.forEach((item) => {
-              const row = document.createElement("tr");
-              if (filter.endpoint === "search") {
-                row.innerHTML = `
-            <td><a href="/movie/${item.ID}">${item["Movie Name"]}</a></td>
-            <td><span style="color: #e50914; font-weight: 600;">${item["Rating"]}</span></td>
-            <td>${item["Genre"]}</td>
-            <td>${item["Directors"]}</td>
-            <td>${item["Stars"]}</td>
-            <td><a href="${item["Link"]}" target="_blank">View</a></td>
-          `;
-              } else {
-                row.innerHTML = `
-            <td><a href="/series/${item.ID}">${item["Title"]}</a></td>
-            <td><span style="color: #e50914; font-weight: 600;">${
-              item["Rating"]
-            }</span></td>
-            <td>${item["Genres"]}</td>
-            <td>${item["Actors"]?.split(",")[0] || "N/A"}</td>
-            <td>${item["Years"]}</td>
-            <td><a href="https://www.imdb.com/find/?q=${encodeURIComponent(
-              item["Title"]
-            )}" target="_blank">View</a></td>
-          `;
+              if (!data || data.length === 0) {
+                artistResults.innerHTML =
+                  '<p style="grid-column:1/-1; text-align:center;">No artists found</p>';
+                return;
               }
-              tbody.appendChild(row);
-            });
+
+              // Ensure we only show the exact number promised (for "Top 10" etc)
+              const results = filter.limit ? data.slice(0, filter.limit) : data;
+
+              results.forEach((artist) => {
+                artistResults.innerHTML += `
+                        <div class="artist-card">
+                            <a href="/artist/${artist.ID}">${artist.artist_name}</a>
+                            <p>${artist.artist_genre}</p>
+                            <p>${artist.country}</p>
+                        </div>
+                    `;
+              });
+
+              // Scroll to artist results
+              document.getElementById("artist-search-section").scrollIntoView({
+                behavior: "smooth",
+              });
+            } else {
+              // Handle movie/series results
+              const tbody = document.querySelector("#results tbody");
+              tbody.innerHTML = "";
+
+              if (!data || data.length === 0) {
+                tbody.innerHTML =
+                  '<tr><td colspan="6" class="no-results">No results found</td></tr>';
+                return;
+              }
+
+              // Ensure we only show the exact number promised (for "Top 10" etc)
+              const results = filter.limit ? data.slice(0, filter.limit) : data;
+
+              results.forEach((item) => {
+                const row = document.createElement("tr");
+                if (filter.endpoint === "search") {
+                  // Movie results
+                  row.innerHTML = `
+                            <td><a href="/movie/${item.ID}">${item["Movie Name"]}</a></td>
+                            <td><span class="rating-value">${item["Rating"]}</span></td>
+                            <td>${item["Genre"]}</td>
+                            <td>${item["Directors"]}</td>
+                            <td>${item["Stars"]}</td>
+                            <td><a href="${item["Link"]}" target="_blank" class="view-link">View</a></td>
+                        `;
+                } else {
+                  // Series results
+                  row.innerHTML = `
+                            <td><a href="/series/${item.ID}">${
+                    item["Title"]
+                  }</a></td>
+                            <td><span class="rating-value">${
+                              item["Rating"]
+                            }</span></td>
+                            <td>${item["Genres"]}</td>
+                            <td>${item["Actors"]?.split(",")[0] || "N/A"}</td>
+                            <td>${item["Years"]}</td>
+                            <td><a href="https://www.imdb.com/find/?q=${encodeURIComponent(
+                              item["Title"]
+                            )}" target="_blank" class="view-link">View</a></td>
+                        `;
+                }
+                tbody.appendChild(row);
+              });
+
+              // Scroll to results table
+              document.querySelector(".table-container").scrollIntoView({
+                behavior: "smooth",
+              });
+            }
           })
           .catch((error) => {
             console.error("Error applying filter:", error);
-            tbody.innerHTML =
-              '<tr><td colspan="6" class="no-results" style="color: #ff6b6b;">Error loading results</td></tr>';
+            if (filter.endpoint === "search_artist") {
+              document.getElementById("artist-results").innerHTML =
+                '<p style="grid-column:1/-1; text-align:center; color:#ff6b6b;">Error loading artist results</p>';
+            } else {
+              document.querySelector("#results tbody").innerHTML =
+                '<tr><td colspan="6" class="error-message">Error loading results. Please try again.</td></tr>';
+            }
           });
       }
     </script>
