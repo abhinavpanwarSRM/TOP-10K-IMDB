@@ -149,5 +149,74 @@ def search_series():
 
     return jsonify(results.to_dict(orient="records"))
 
+# ===== Load Artist CSV =====
+ARTIST_PATH = os.path.join(BASE_DIR, "artists.csv")
+artists_df = pd.read_csv(ARTIST_PATH)
+
+if 'ID' not in artists_df.columns:
+    artists_df.insert(0, 'ID', range(1, len(artists_df) + 1))
+
+artists_df = artists_df.fillna("")
+
+# ===== Artist Search =====
+@app.route("/search_artist")
+def search_artist():
+    name = request.args.get("name", "").strip().lower()
+    genre = request.args.get("genre", "").strip().lower()
+    country = request.args.get("country", "").strip().lower()
+
+    results = artists_df.copy()
+
+    if name:
+        results = results[results['artist_name'].str.lower().str.contains(name, na=False)]
+    if genre:
+        results = results[results['artist_genre'].str.lower().str.contains(genre, na=False)]
+    if country:
+        results = results[results['country'].str.lower().str.contains(country, na=False)]
+
+    # Limit to 500 results
+    results = results.head(500)
+
+    results['DetailLink'] = results['ID'].apply(lambda x: f"/artist/{x}")
+
+    return jsonify(results.to_dict(orient="records"))
+
+
+# ===== Artist Detail Page =====
+@app.route("/artist/<int:artist_id>")
+def artist_detail(artist_id):
+    artist = artists_df[artists_df['ID'] == artist_id].to_dict(orient="records")
+    if not artist:
+        return "Artist not found", 404
+    artist = artist[0]
+
+    genre = artist.get('artist_genre', '').lower()
+
+    # Find related artists by genre
+    same_genre = artists_df[
+        artists_df['artist_genre'].str.lower().str.contains(genre, na=False) &
+        (artists_df['ID'] != artist_id)
+    ]
+    related_artists = same_genre.sample(n=min(10, len(same_genre))).to_dict(orient='records')
+
+    # YouTube API keys for video embedding
+    api_key_1 = "AIzaSyBdgQrCmB6XxxOXSN3Oyk8zmsRIxq9V_kg"  # Replace with your actual keys
+    api_key_2 = "AIzaSyCW13LFIN7BBQWREenK5rcZ1XGQuX8ijKg"  # Replace with your actual keys
+
+    return render_template(
+        "artist.html",
+        artist=artist,
+        related_artists=related_artists,
+        api_key_1=api_key_1,
+        api_key_2=api_key_2
+    )
+
+# ===== Random Artists =====
+@app.route("/random_artists")
+def random_artists():
+    random_list = artists_df.sample(n=min(10, len(artists_df))).to_dict(orient="records")
+    return jsonify(random_list)
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=False)
