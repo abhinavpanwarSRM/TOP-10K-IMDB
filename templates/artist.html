@@ -380,7 +380,7 @@
         }
 
         const currentKey = API_KEYS[currentKeyIndex];
-        const searchQuery = `${artistName} most viewed song`;
+        const searchQuery = `most viewed song by ${artistName} on youtube`;
 
         fetch(
           `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
