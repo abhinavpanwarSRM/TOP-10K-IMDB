@@ -1531,6 +1531,387 @@
       </section>
       <!-- ===== End Artist Search & Suggestions Section ===== -->
 
+      <!-- Games Section -->
+      <section id="gamesSection" class="section">
+        <h2 class="games-title">Game Recommendations</h2>
+
+        <!-- Game Search Filters -->
+        <div class="games-filters" id="gamesFilters">
+          <form id="gamesSearchForm">
+            <input type="text" id="gamesNameSearch" placeholder="Game Name" />
+            <input
+              type="text"
+              id="gamesPlatformFilter"
+              placeholder="Platform"
+            />
+            <input
+              type="number"
+              id="gamesYearFilter"
+              placeholder="Year"
+              min="1900"
+            />
+            <input type="text" id="gamesGenreFilter" placeholder="Genre" />
+            <input
+              type="text"
+              id="gamesPublisherFilter"
+              placeholder="Publisher"
+            />
+            <input
+              type="number"
+              id="gamesMinSales"
+              min="0"
+              max="83"
+              step="1.0"
+              placeholder="Min Sales"
+            />
+            <input
+              type="number"
+              id="gamesMaxSales"
+              min="0"
+              max="83"
+              step="1.0"
+              placeholder="Max Sales"
+            />
+            <button type="submit">Search Games</button>
+          </form>
+        </div>
+
+        <!-- Game Search Results -->
+        <div class="games-table-container">
+          <div class="games-scrollable-container">
+            <table id="gamesResults">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Platform</th>
+                  <th>Year</th>
+                  <th>Genre</th>
+                  <th>Publisher</th>
+                  <th>Sales (M)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Results will be loaded here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Game Recommendations -->
+        <h3 class="games-subtitle">Recommended Games</h3>
+        <div class="games-scrollable-container">
+          <div class="games-grid" id="gamesRecommendations">
+            <!-- Recommendations will be loaded here -->
+          </div>
+        </div>
+
+        <style>
+          /* Variables */
+          #gamesSection {
+            --games-primary: #7e57c2;
+            --games-accent: #7e57c2;
+            --games-card-bg: rgba(28, 28, 40, 0.8);
+            --games-text-light: #e0e0e0;
+            --games-text-grey: #a0a0a0;
+            --games-input-bg: rgba(255, 255, 255, 0.05);
+          }
+
+          .games-title,
+          .games-subtitle {
+            text-align: center;
+            color: var(--games-text-light);
+          }
+
+          /* Filter container */
+          .games-filters {
+            background: var(--games-card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+          }
+
+          /* Flex layout */
+          #gamesSearchForm {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+          }
+
+          #gamesSearchForm input {
+            flex: 1 1 150px;
+            padding: 0.8rem 1rem;
+            background: var(--games-input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: var(--games-text-light);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+          }
+
+          #gamesSearchForm input:focus {
+            outline: none;
+            border-color: var(--games-primary);
+            box-shadow: 0 0 0 2px rgba(92, 107, 192, 0.3);
+          }
+
+          #gamesSearchForm button {
+            padding: 0.85rem 1.2rem;
+            background: var(--games-primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            flex: 0 0 auto;
+          }
+
+          #gamesSearchForm button:hover {
+            background: var(--games-accent);
+            transform: translateY(-2px);
+          }
+
+          /* Games grid */
+          .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            padding: 10px 5px;
+          }
+
+          .games-card {
+            background: var(--games-card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border-left: 3px solid var(--games-primary);
+          }
+
+          .games-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border-left-color: var(--games-accent);
+          }
+
+          .games-card a {
+            display: block;
+            padding: 15px;
+            text-decoration: none;
+            color: var(--games-text-light);
+          }
+
+          .games-card h4 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            font-weight: 600;
+          }
+
+          .games-card p {
+            margin: 5px 0;
+            font-size: 13px;
+            color: var(--games-text-grey);
+          }
+
+          .games-card .games-sales {
+            color: var(--games-primary);
+            font-weight: 600;
+          }
+
+          /* Scroll container */
+          .games-scrollable-container {
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 10px 0;
+            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--games-primary) var(--games-card-bg);
+          }
+
+          .games-scrollable-container::-webkit-scrollbar {
+            width: 8px;
+          }
+
+          .games-scrollable-container::-webkit-scrollbar-track {
+            background: var(--games-card-bg);
+            border-radius: 4px;
+          }
+
+          .games-scrollable-container::-webkit-scrollbar-thumb {
+            background-color: var(--games-primary);
+            border-radius: 4px;
+          }
+
+          /* Table */
+          .games-table-container {
+            background: var(--games-card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+          }
+
+          #gamesResults {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px; /* for scroll on small screens */
+          }
+
+          #gamesResults th {
+            background: var(--games-primary);
+            color: white;
+            padding: 12px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+          }
+
+          #gamesResults td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+          }
+
+          #gamesResults tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+          }
+
+          #gamesResults a {
+            color: var(--games-text-light);
+            text-decoration: none;
+          }
+
+          #gamesResults a:hover {
+            color: var(--games-accent);
+          }
+
+          /* RESPONSIVE BREAKPOINTS */
+          @media (max-width: 1024px) {
+            #gamesSearchForm input {
+              flex: 1 1 calc(50% - 1rem);
+            }
+          }
+
+          @media (max-width: 768px) {
+            #gamesSearchForm input,
+            #gamesSearchForm button {
+              flex: 1 1 100%;
+            }
+            .games-grid {
+              grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+          }
+
+          @media (max-width: 480px) {
+            .games-grid {
+              grid-template-columns: 1fr;
+            }
+          }
+        </style>
+
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            loadGamesRecommendations();
+            document
+              .getElementById("gamesSearchForm")
+              .addEventListener("submit", function (e) {
+                e.preventDefault();
+                searchGames();
+              });
+          });
+
+          function loadGamesRecommendations() {
+            const container = document.getElementById("gamesRecommendations");
+            container.innerHTML =
+              '<div class="games-loading"><div class="games-spinner"></div></div>';
+
+            fetch("/recommend_games")
+              .then((response) => response.json())
+              .then((data) => {
+                container.innerHTML = "";
+                if (data.length === 0) {
+                  container.innerHTML =
+                    '<p class="games-no-results">No game recommendations found</p>';
+                  return;
+                }
+                data.forEach((game) => {
+                  const card = document.createElement("div");
+                  card.className = "games-card";
+                  card.innerHTML = `
+              <a href="/game/${game.ID}">
+                  <h4>${game.Name}</h4>
+                  <p><strong>Platform:</strong> ${game.Platform}</p>
+                  <p><strong>Year:</strong> ${game.Year}</p>
+                  <p><strong>Genre:</strong> ${game.Genre.split(",")[0]}</p>
+                  <p class="games-sales"><strong>Sales:</strong> ${
+                    game.Global_Sales
+                  }M</p>
+              </a>
+          `;
+                  container.appendChild(card);
+                });
+              });
+          }
+
+          function searchGames() {
+            const name = document.getElementById("gamesNameSearch").value;
+            const platform = document.getElementById(
+              "gamesPlatformFilter"
+            ).value;
+            const year = document.getElementById("gamesYearFilter").value;
+            const genre = document.getElementById("gamesGenreFilter").value;
+            const publisher = document.getElementById(
+              "gamesPublisherFilter"
+            ).value;
+            const minSales =
+              document.getElementById("gamesMinSales").value || 0;
+            const maxSales =
+              document.getElementById("gamesMaxSales").value || 100;
+
+            const params = new URLSearchParams();
+            if (name) params.append("name", name);
+            if (platform) params.append("platform", platform);
+            if (year) params.append("year", year);
+            if (genre) params.append("genre", genre);
+            if (publisher) params.append("publisher", publisher);
+            params.append("min_sales", minSales);
+            params.append("max_sales", maxSales);
+
+            const tbody = document.querySelector("#gamesResults tbody");
+            tbody.innerHTML =
+              '<tr><td colspan="6"><div class="games-loading"><div class="games-spinner"></div></div></td></tr>';
+
+            fetch(`/search_games?${params.toString()}`)
+              .then((response) => response.json())
+              .then((data) => {
+                tbody.innerHTML = "";
+                if (data.length === 0) {
+                  tbody.innerHTML =
+                    '<tr><td colspan="6" class="games-no-results">No games found</td></tr>';
+                  return;
+                }
+                data.forEach((game) => {
+                  const row = document.createElement("tr");
+                  row.innerHTML = `
+              <td><a href="/game/${game.ID}">${game.Name}</a></td>
+              <td>${game.Platform}</td>
+              <td>${game.Year}</td>
+              <td>${game.Genre.split(",")[0]}</td>
+              <td>${game.Publisher}</td>
+              <td>${game.Global_Sales}</td>
+          `;
+                  tbody.appendChild(row);
+                });
+              });
+          }
+        </script>
+      </section>
+
       <div class="table-container">
         <table id="results">
           <thead>
