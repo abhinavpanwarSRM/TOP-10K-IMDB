@@ -2725,7 +2725,7 @@
               (a, b) => parseFloat(b.Rating) - parseFloat(a.Rating)
             );
             displayRecommendations(
-              filteredData.slice(0, 6),
+              filteredData.slice(0, 20),
               userAnswers.contentType === "Movies" ? "movie" : "series"
             );
           })
