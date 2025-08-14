@@ -1517,6 +1517,7 @@
                     `;
                     });
                   }
+                  this.reset();
                 })
                 .catch((error) => {
                   console.error("Error searching artists:", error);
@@ -1906,6 +1907,15 @@
               <td>${game.Global_Sales}</td>
           `;
                   tbody.appendChild(row);
+
+                  document.getElementById("gamesSearchForm").reset();
+
+                  // ✅ Smooth scroll to results table
+                  document
+                    .querySelector(".games-table-container")
+                    .scrollIntoView({
+                      behavior: "smooth",
+                    });
                 });
               });
           }
