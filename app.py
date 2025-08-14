@@ -82,6 +82,9 @@ def search():
     # Instead of IMDb link, give our own detail page link
     results['DetailLink'] = results['ID'].apply(lambda x: f"/movie/{x}")
 
+    # Limit to 500 results
+    results = results.head(500)
+
     return jsonify(results.to_dict(orient="records"))
 
 # ===== Load Series CSV =====
@@ -146,6 +149,9 @@ def search_series():
     results = results[(results['Rating'] >= min_rating) & (results['Rating'] <= max_rating)]
 
     results['DetailLink'] = results['ID'].apply(lambda x: f"/series/{x}")
+
+    # Limit to 500 results
+    results = results.head(500)
 
     return jsonify(results.to_dict(orient="records"))
 
@@ -217,6 +223,117 @@ def random_artists():
     random_list = artists_df.sample(n=min(10, len(artists_df))).to_dict(orient="records")
     return jsonify(random_list)
 
+
+# ===== Load Games CSV =====
+GAMES_PATH = os.path.join(BASE_DIR, "games.csv")
+games_df = pd.read_csv(GAMES_PATH)
+
+# Add ID column if missing
+if 'ID' not in games_df.columns:
+    games_df.insert(0, 'ID', range(1, len(games_df) + 1))
+
+games_df = games_df.fillna("")
+
+# ===== Game Detail Page =====
+@app.route("/game/<int:game_id>")
+def game_detail(game_id):
+    game = games_df[games_df['ID'] == game_id].to_dict(orient="records")
+    if not game:
+        return "Game not found", 404
+    game = game[0]
+
+    # Get recommendations with 9:1 ratio
+    recommendations = get_game_recommendations(game_id)
+
+    # YouTube API keys for video embedding
+    api_key_1 = "AIzaSyBdgQrCmB6XxxOXSN3Oyk8zmsRIxq9V_kg"  # Replace with your actual key
+    api_key_2 = "AIzaSyCW13LFIN7BBQWREenK5rcZ1XGQuX8ijKg"  # Replace with your actual key
+
+    return render_template(
+        "game.html",
+        game=game,
+        recommendations=recommendations,
+        api_key_1=api_key_1,
+        api_key_2=api_key_2
+    )
+
+
+def get_game_recommendations(game_id):
+    current_game = games_df[games_df['ID'] == game_id].iloc[0]
+    genre = current_game['Genre']
+    platform = current_game['Platform']
+    
+    # Get top 9 similar games (same genre/platform, high sales)
+    similar_games = games_df[
+        (games_df['Genre'] == genre) & 
+        (games_df['Platform'] == platform) & 
+        (games_df['ID'] != game_id)
+    ].sort_values('Global_Sales', ascending=False).head(9)
+    
+    # Get 1 diverse recommendation (different genre/platform, lower rank)
+    diverse_games = games_df[
+        ((games_df['Genre'] != genre) | (games_df['Platform'] != platform)) &
+        (games_df['Rank'] > 100)  # Lower ranked games
+    ].sample(n=1)
+    
+    recommendations = pd.concat([similar_games, diverse_games])
+    return recommendations.to_dict(orient='records')
+
+# ===== Game Search =====
+@app.route("/search_games")
+def search_games():
+    name = request.args.get("name", "").strip().lower()
+    platform = request.args.get("platform", "").strip()
+    year = request.args.get("year", "").strip()
+    genre = request.args.get("genre", "").strip()
+    publisher = request.args.get("publisher", "").strip()
+    min_sales = float(request.args.get("min_sales", 0) or 0)
+    max_sales = float(request.args.get("max_sales", 100) or 100)
+
+    results = games_df.copy()
+
+    if name:
+        results = results[results['Name'].str.lower().str.contains(name, na=False)]
+    if platform:
+        results = results[results['Platform'].str.contains(platform, na=False)]
+    if year:
+        results = results[results['Year'].astype(str).str.contains(year, na=False)]
+    if genre:
+        results = results[results['Genre'].str.contains(genre, na=False)]
+    if publisher:
+        results = results[results['Publisher'].str.contains(publisher, na=False)]
+
+    # Filter by sales
+    results = results[
+        (results['Global_Sales'] >= min_sales) & 
+        (results['Global_Sales'] <= max_sales)
+    ]
+
+    # Add detail link
+    results['DetailLink'] = results['ID'].apply(lambda x: f"/game/{x}")
+
+    # Limit to 500 results
+    results = results.head(500)
+
+    return jsonify(results.to_dict(orient="records"))
+
+# ===== Game Recommendations =====
+@app.route("/recommend_games")
+def recommend_games():
+    # Get base recommendations (top sellers + some diverse picks)
+    top_games = games_df.sort_values('Global_Sales', ascending=False).head(45)
+    diverse_games = games_df[
+        (games_df['Rank'] > 100) & 
+        ~games_df['Genre'].isin(top_games['Genre'].unique())
+    ].sample(n=5)
+    
+    recommendations = pd.concat([top_games, diverse_games]).sample(frac=1)  # Shuffle
+    recommendations['DetailLink'] = recommendations['ID'].apply(lambda x: f"/game/{x}")
+    
+    # Limit to 500 results
+    recommendations = recommendations.head(500)
+    
+    return jsonify(recommendations.to_dict(orient="records"))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=False)
